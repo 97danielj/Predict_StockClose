@@ -1,0 +1,2 @@
+model_checkpoint_path: "004170ckeckpointer.ckpt"
+all_model_checkpoint_paths: "004170ckeckpointer.ckpt"
