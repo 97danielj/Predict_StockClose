@@ -1,0 +1,23 @@
+2023-08-21 14:02:27.172698
+230822
+ * Serving Flask app "application" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 231-770-358
+ * Detected change in '/workspace/Predict_StockClose/application.py', reloading
+2023-08-21 14:02:28.183954
+230822
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 231-770-358
+ * Detected change in '/workspace/Predict_StockClose/application.py', reloading
+2023-08-21 14:02:31.682605
+230822
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 231-770-358

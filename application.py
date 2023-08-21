@@ -4,9 +4,9 @@ import sys
 from datetime import date, timedelta,datetime
 application = Flask(__name__)
 
-rinuxtimenow = datetime.now() #리눅스 현재 시각
-krtimenow = rinuxtimenow+timedelta(hours=9) # kr현재시각
-tomorrow = rinuxtimenow+timedelta(days=1,hours=9) #kr 24시간 후
+linuxtimenow = datetime.now() #리눅스 현재 시각
+krtimenow = linuxtimenow+timedelta(hours=9) # kr현재시각
+tomorrow = linuxtimenow+timedelta(days=1,hours=9) #kr 24시간 후
 if(16 <= krtimenow.hour and krtimenow.hour<= 23):
     set_d = tomorrow.date()
 elif (0 <= krtimenow.hour and krtimenow.hour< 16):
@@ -14,7 +14,8 @@ elif (0 <= krtimenow.hour and krtimenow.hour< 16):
 set_d = set_d.isoformat()
 set_d = set_d.replace('-','')[2:]
 set_d
-
+print(linuxtimenow)
+print(set_d)
 @application.route("/")
 def hello():
     return "Hello goorm!"
@@ -22,8 +23,10 @@ def hello():
 with open(f'{set_d}pred_dic.pickle','rb') as f:
     pred_dic = pickle.load(f)
 
-with open('certificated_stock_dic.pickle' , 'wb') as f:
+with open('certificated_stock_dic.pickle' , 'rb') as f:
     certificated_stock_dic = pickle.load(f)
+    
+
 '''
 @application.route("/return_entry", methods=["POST"])
 def return_entry():
@@ -247,29 +250,46 @@ def carousel():
     return jsonify(response)
 
 
-
-sector_l = {
-    '음식료품' : ['오리온', '하이트진로', '농심', '롯데칠성'],
-    '섬유의복' : ['LF', '한섬', '한세실업'],
-    '화학' :  ['SK이노베이션', 'S-Oil', 'LG생활건강', '아모레퍼시픽'],
-    '의약품' :  ['삼성바이오로직스', '셀트리온', '한미약품'],
-    '비금속광물' : ['쌍용C&E', '아이에스동서'],
-    '철강금속' : ['POSCO홀딩스', '고려아연', '현대제철', 'KG스틸', '동국제강'],
-    '기계' : ['두산에너빌리티', '한온시스템', '두산밥캣', '씨에스윈드'],
-    '전기전자': ['삼성전자', 'SK하이닉스', 'LG전자'],
-    '건설업' : ['현대건설', 'GS건설', '대우건설', '한전KPS'],
-    '운수창고' : ['HMM', '대한항공', '현대글로비스', '한진칼', '팬오션'],
-    '유통업' : ['삼성물산', '롯데쇼핑', 'BGF리테일', '이마트', '신세계'],
-    '전기가스업' : ['한국전력', '한국가스공사'],
-    '통신업' : [ 'KT', 'LG유플러스'],
-    '금융업' :  ['LG' , '삼성화재', '미래에셋증권'],
-    '증권' : ['NH투자증권' ,'삼성증권', '메리츠증권', '키움증권'],
-    '보험' : ['삼성생명', 'DB손해보험', '현대해상'],
-    '서비스업' : [ '삼성에스디에스', '엔씨소프트'],
-    '제조업' :  ['현대차', '기아', '현대모비스', 'KT&G', '삼성전기']
+sector_l_list = {
+    'Food' : ['CJ제일제당', '오리온', '하이트진로', '농심', '롯데칠성'],
+    'Clothing' : ['LF', '한샘', '한세실업', '대한방직'],
+    'Chemical' :  ['LG화학', 'SK이노베이션', 'S-Oil', 'LG생활건강', '아모레퍼시픽'],
+    'Medicine' :  ['삼성바이오로직스', '셀트리온', '유한양행', '한미약품'],
+    'Non_Metal' : ['쌍용C&E', '아이에스동서'],
+    'Metal' : ['POSCO홀딩스', '고려아연', '현대제철', '동국제강'],
+    'Machine' : ['두산에너빌리티', '한온시스템', '두산밥캣', '씨에스윈드'],
+    'Electronic' : ['삼성전자', 'SK하이닉스', 'LG전자'],
+    'Construction' : ['현대건설', 'GS건설', '대우건설', '한전KPS'],
+    'Transport' : ['HMM', '대한항공', '현대글로비스', '한진칼', '팬오션'],
+    'Distribution' : ['삼성물산', '롯데쇼핑', 'BGF리테일', '이마트', '신세계'],
+    'Power' : ['한국전력', '한국가스공사', '서울가스'],
+    'Tele' : [ 'SK텔레콤', 'KT', 'LG유플러스'],
+    'Finance' :  ['LG' , '삼성화재', '미래에셋증권'],
+    'Brokerage' : ['NH투자증권' ,'삼성증권', '메리츠증권', '키움증권'],
+    'Insurer' : ['삼성생명', 'DB손해보험', '메리츠화재', '현대해상'],
+    'Service' : [ '삼성에스디에스', '엔씨소프트'],
+    'Manufacturer' :  ['현대자동차', '기아자동차', '현대모비스', 'KT&G', '삼성전기']
 }
-
-
+sector_l = {
+    'Food': {'CJ제일제당':'097950', '오리온':'271560', '하이트진로':'000080', '농심':'004370', '롯데칠성':'005300'},
+    'Clothing': {'LF':'093050', '한샘':'020000', '한세실업':'105630', '대한방직':'001070'},
+    'Chemical':  {'LG화학':'051910', 'SK이노베이션':'096770', 'S-Oil':'010950', 'LG생활건강':'051900', '아모레퍼시픽':'090430'},
+    'Medicine':  {'삼성바이오로직스':'207940', '셀트리온':'068270','유한양행':'000100', '한미약품':'128940'},
+    'Non_Metal': {'쌍용C&E':'003410', '아이에스동서':'010780'},
+    'Metal': {'POSCO홀딩스':'005490', '고려아연':'010130', '현대제철':'004020', '동국제강':'001230'},
+    'Machine': {'두산에너빌리티':'034020', '한온시스템':'018880', '두산밥캣':'241560', '씨에스윈드':'112610'},
+    'Electronic': {'삼성전자':'005930', 'SK하이닉스':'000660', 'LG전자':'066570'},
+    'Construction': {'현대건설':'000720', 'GS건설':'006360', '대우건설':'047040', '한전KPS':'051600'},
+    'Transport': {'HMM':'011200', '대한항공':'003490', '현대글로비스':'086280', '한진칼':'180640', '팬오션':'028670'},
+    'Distribution': {'삼성물산':'028260', '롯데쇼핑':'023530', 'BGF리테일':'282330', '이마트':'139480', '신세계':'004170'},
+    'Power': {'한국전력':'015760', '한국가스공사':'036460', '서울가스':'017390'},
+    'Tele': {'SK텔레콤':'017670','KT':'030200', 'LG유플러스':'032640'},
+    'Finance':  {'LG':'003550', '삼성화재':'000810', '미래에셋증권':'006800'},
+    'Brokerage': {'NH투자증권':'005940' ,'삼성증권':'016360', '메리츠증권':'008560', '키움증권':'039490'},
+    'Insurer': {'삼성생명':'032830', 'DB손해보험':'005830', '메리츠화재':'000060','현대해상':'001450'},
+    'Service': { '삼성에스디에스':'018260', '엔씨소프트':'036570'},
+    'Manufacturer':  {'현대자동차':'005380', '기아자동차':'000270', '현대모비스':'012330', 'KT&G':'033780', '삼성전기':'009150'}
+}
 
 
 #업종별 리스트 출력(listitem)
@@ -279,7 +299,8 @@ def listitem():
     text = None
     req = request.get_json(silent=True)
     answer = req["action"]['detailParams']['sector_entity']['value']   # json파일 읽기
-    n = len(sector_l[answer])
+    print(answer)
+    n = len(sector_l_list[answer])
     res = sector_l_response(answer,n)
     
     # 답변 텍스트 설정
@@ -297,7 +318,7 @@ def listitem():
                 {
                   "label": "뒤로가기",
                   "action": "message",
-                  "messageText" : "업종별",
+                  "messageText": "업종별",
                 }
               ]
         }
@@ -310,173 +331,29 @@ def listitem():
 
 
 #listitem의 json코드만들기
-def sector_l_response(answer,n):
-    if n==1:
-        res = [
-             {
-              "title": sector_l[answer][0],
-              "imageUrl": "https://img.danawa.com/prod_img/500000/284/976/img/8976284_1.jpg?shrink=330:330&_v=20190802153645",
-              "action": "message",
-              "messageText": sector_l[answer][0],
-              },
-        ]
-    elif n==2:
-        res = [
-             {
-              "title": sector_l[answer][0],
-              "imageUrl": "https://img.danawa.com/prod_img/500000/164/976/img/8976164_1.jpg?shrink=330:330&_v=20190802153555",
-              "action": "message",
-              "messageText": sector_l[answer][0],
-              },
-            {
-              "title": sector_l[answer][1],
-              "imageUrl": "https://img.danawa.com/prod_img/500000/452/976/img/8976452_1.jpg?shrink=330:330&_v=20190802154103",
-              "action": "message",
-              "messageText": sector_l[answer][1],
-              },
-        ]
-    elif n==3:
-        res = [
-             {
-              "title": sector_l[answer][0],
-              "imageUrl": "https://shop1.daumcdn.net/thumb/R500x500/?fname=http%3A%2F%2Fshop1.daumcdn.net%2Fshophow%2Fp%2FO16783343728.jpg%3Fut%3D20220324163643",
-              "action": "message",
-              "messageText": sector_l[answer][0],
-              },
-            {
-              "title": sector_l[answer][1],
-              "imageUrl": "https://thumbnail9.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2021/03/08/15/3/3c275dcf-458d-4af1-8bc2-45ed7ea70219.jpg",
-              "action": "message",
-              "messageText": sector_l[answer][1],
-              },
-            {
-              "title": sector_l[answer][2],
-              "imageUrl": "https://img.danawa.com/prod_img/500000/044/976/img/8976044_1.jpg?shrink=330:330&_v=20190802153539",
-              "action": "message",
-              "messageText": sector_l[answer][2],
-              },
-        ]
-    elif n==4:
-        res = [
-             {
-              "title": sector_l[answer][0],
-              "imageUrl": "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/product/3181252337/B.jpg?479000000",
-              "action": "message",
-              "messageText": sector_l[answer][0],
-              },
-            {
-              "title": sector_l[answer][1],
-              "imageUrl": "https://img.danawa.com/prod_img/500000/284/976/img/8976284_1.jpg?shrink=330:330&_v=20190802153645",
-              "action": "message",
-              "messageText": sector_l[answer][1],
-              },
-            {
-              "title": sector_l[answer][2],
-              "imageUrl": "http://image.kyobobook.co.kr/newimages/giftshop_new/goods/400/1730/hot1539673071039.jpg",
-              "action": "message",
-              "messageText": sector_l[answer][2],
-              },
-            {
-              "title": sector_l[answer][3],
-              "imageUrl": "http://mstatic1.e-himart.co.kr/contents/goods/00/15/59/76/87/0015597687__MW64027_1944709__M_640_640.jpg",
-              "action": "message",
-              "messageText": sector_l[answer][3],
-              },
-        ]
-    elif n==5:
-        res = [
-             {
-              "title": sector_l[answer][0],
-              "imageUrl": "https://shop1.daumcdn.net/thumb/R500x500/?fname=http%3A%2F%2Fshop1.daumcdn.net%2Fshophow%2Fp%2FO16783343728.jpg%3Fut%3D20220324163643",
-              "action": "message",
-              "messageText": sector_l[answer][0],
-              },
-            {
-              "title": sector_l[answer][1],
-              "imageUrl": "https://thumbnail9.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2021/03/08/15/3/3c275dcf-458d-4af1-8bc2-45ed7ea70219.jpg",
-              "action": "message",
-              "messageText": sector_l[answer][1],
-              },
-            {
-              "title": sector_l[answer][2],
-              "imageUrl": "https://img.danawa.com/prod_img/500000/044/976/img/8976044_1.jpg?shrink=330:330&_v=20190802153539",
-              "action": "message",
-              "messageText": sector_l[answer][2],
-              },
-            {
-              "title": sector_l[answer][3],
-              "imageUrl": "https://img.danawa.com/prod_img/500000/164/976/img/8976164_1.jpg?shrink=330:330&_v=20190802153555",
-              "action": "message",
-              "messageText": sector_l[answer][3],
-              },
-            {
-              "title": sector_l[answer][4],
-              "imageUrl": "https://img.danawa.com/prod_img/500000/452/976/img/8976452_1.jpg?shrink=330:330&_v=20190802154103",
-              "action": "message",
-              "messageText": sector_l[answer][4],
-              },
-        ]
+def sector_l_response(answer, n):
+    res = []
+    image_urls = [
+        "https://img.danawa.com/prod_img/500000/284/976/img/8976284_1.jpg?shrink=330:330&_v=20190802153645",
+        "https://img.danawa.com/prod_img/500000/164/976/img/8976164_1.jpg?shrink=330:330&_v=20190802153555",
+        "https://shop1.daumcdn.net/thumb/R500x500/?fname=http%3A%2F%2Fshop1.daumcdn.net%2Fshophow%2Fp%2FO16783343728.jpg%3Fut%3D20220324163643",
+        "https://thumbnail9.coupangcdn.com/thumbnails/remote/492x492ex/image/retail/images/2021/03/08/15/3/3c275dcf-458d-4af1-8bc2-45ed7ea70219.jpg",
+        "https://img.danawa.com/prod_img/500000/044/976/img/8976044_1.jpg?shrink=330:330&_v=20190802153539",
+        "http://image.kyobobook.co.kr/newimages/giftshop_new/goods/400/1730/hot1539673071039.jpg",
+        "http://mstatic1.e-himart.co.kr/contents/goods/00/15/59/76/87/0015597687__MW64027_1944709__M_640_640.jpg",
+    ]
+    
+    for i in range(n):
+        res.append({
+            "title": sector_l_list[answer][i],
+            "imageUrl": image_urls[i],
+            "action": "message", # stock_code = sector_l_list[answer][sector_l[answer][i]]
+            "messageText": pred_dic[answer][sector_l[answer][sector_l_list[answer][i]]]
+                  
+
+        })
+    
     return res
-
-
-#업종별 리스트 출력(basiccard)
-#---------------------------------------------------
-@application.route("/basiccard", methods=["POST"])
-def basiccard():
-    text = None
-    req = request.get_json(silent=True)
-    answer = req["action"]['detailParams']['stock_code']['value']
-    stock_code = answer[-6:]
-    sector_name = answer[:-6]
-    stock_idx = certificated_stock_dic[sector_name].index(stock_code)
-    stock_code_kr = sector_l[sector_name][stock_idx]
-    result = pred_dic[sector_name][stock_code][0]
-    URL = None
-    if result == 2:
-        URL = 'https://media.discordapp.net/attachments/992344867718037604/1006739068345917591/up.png'
-    elif result == 1:
-        URL = 'https://cdn.discordapp.com/attachments/992344867718037604/1006739067918106696/down.png'
-    else: 
-    	URL = 'https://cdn.discordapp.com/attachments/992344867718037604/1006739067398004756/sideways.png'
-    response = {
-      "version": "2.0",
-      "template": {
-        "outputs": [
-          {
-            "basicCard": {
-              "title": "보물상자",
-              "description": "보물상자 안에는 뭐가 있을까",
-              "thumbnail": {
-                "imageUrl": "https://t1.kakaocdn.net/openbuilder/sample/lj3JUcmrzC53YIjNDkqbWK.jpg"
-              },
-              "profile": {
-                "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4BJ9LU4Ikr_EvZLmijfcjzQKMRCJ2bO3A8SVKNuQ78zu2KOqM",
-                "nickname": "보물상자"
-              },
-              "social": {
-                "like": 1238,
-                "comment": 8,
-                "share": 780
-              },
-              "buttons": [
-                {
-                  "action": "message",
-                  "label": "열어보기",
-                  "messageText": "짜잔! 우리가 찾던 보물입니다"
-                },
-                {
-                  "action":  "webLink",
-                  "label": "구경하기",
-                  "webLinkUrl": "https://e.kakao.com/t/hello-ryan"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    }
-    return jsonify(response)
-  
 
 
 if __name__ == "__main__":
